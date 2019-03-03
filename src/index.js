@@ -5,6 +5,7 @@ import allReducers from "./reducers/users"
 import {createStore, applyMiddleware} from "redux"
 import thunk from "redux-thunk"
 import registerServiceWorker from "./registerServiceWorker"
+import './styles/index.css';
 
 const store = createStore(
     allReducers
