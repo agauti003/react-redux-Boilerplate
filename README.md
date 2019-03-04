@@ -1,5 +1,5 @@
 # react-redux-Boilerplate
-<img src="https://cdn-images-1.medium.com/max/1200/1*m_q0YKyWw7Qqbh-qklinTw.png" alt="react boilerplate banner" align="center" />
+<img src="https://cdn-images-1.medium.com/max/1600/1*XLPUfIkmIA01h1D0ti-wJw.png" alt="react boilerplate banner" align="center" />
 <br />
 <div align="center"><strong>Start your next react project in seconds</strong></div>
 <div align="center">A highly scalable, offline-first foundation with the best DS and a focus on performance and best practices</div>
