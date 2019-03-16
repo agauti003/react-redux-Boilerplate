@@ -19,9 +19,9 @@ const webpackConfig = {
   },
   mode: process.env.NODE_ENV,
   devtool: 'source-map',
-  entry: [path.resolve(__dirname, 'src/index')],
+  entry: [path.resolve(__dirname, 'src/index.js')],
   output: {
-    path: path.join(__dirname, '/dist'),
+    path: path.join(__dirname, 'dist'),
     filename: 'index_bundle.js',
   },
   plugins: [
@@ -33,7 +33,6 @@ const webpackConfig = {
     new MiniCssExtractPlugin('[name].css'),
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      favicon: './public/favicon.ico',
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -49,8 +48,8 @@ const webpackConfig = {
       inject: true,
     }),
     new webpack.LoaderOptionsPlugin({
-      minimize: true,
-      debug: false,
+      minimize: false,
+      debug: true,
       noInfo: true, // set to false to see a list of every file being bundled.
       options: {
         sassLoader: {
@@ -74,41 +73,85 @@ const webpackConfig = {
     },
     {
       test: /\.(sa|sc|c)ss$/,
-      exclude: /node_modules/,
       use: [
         'style-loader',
-        'css-loader',
-        'postcss-loader',
-        'sass-loader',
+        {
+          loader: 'css-loader',
+          options: {
+            sourceMap: true,
+          },
+        },
+        {
+          loader: 'postcss-loader',
+        },
+        {
+          loader: 'sass-loader',
+          options: {
+            sourceMap: true,
+            outputStyle: 'expanded',
+            includePaths: [
+              path.resolve('./node_modules'),
+            ],
+          },
+        },
       ],
     },
     {
-      test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-      use: [{
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]',
-          outputPath: 'assets/fonts/', // where the fonts will go
-          publicPath: '/dist/', // override the default path
-        },
-      }],
+      test: /\.eot(\?v=\d+.\d+.\d+)?$/,
+      use: 'file-loader',
     },
     {
-      test: /\.(gif|png|jpe?g)$/i,
-      use: [{
+      test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+      use: {
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          mimetype: 'application/font-woff',
+        },
+      },
+    },
+    {
+      test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/,
+      use: {
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          mimetype: 'application/octet-stream',
+        },
+      },
+    },
+    {
+      test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+      use: {
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          mimetype: 'image/svg+xml',
+        },
+      },
+    },
+    {
+      test: /\.(jpe?g|png|gif)$/i,
+      use: {
         loader: 'file-loader',
         options: {
           name: '[name].[ext]',
-          outputPath: 'assets/images/', // where the fonts will go
-          publicPath: '/dist/', // override the default path
         },
-      }],
+      },
+    },
+    {
+      test: /\.ico$/,
+      use: {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+        },
+      },
     },
     ],
   },
   externals: {
-    Config: `./config/${JSON.stringify(`./config.${process.env.NODE_ENV}.json`)}`,
+    Config: `${JSON.stringify(path.join(__dirname,`config/config.${process.env.NODE_ENV}.json`))}`,
   },
 };
-module.exports = webpackConfig
-;
+module.exports = webpackConfig;

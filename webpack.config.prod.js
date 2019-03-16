@@ -75,7 +75,6 @@ const webpackConfig = {
     new MiniCssExtractPlugin('[name].[hash].css'),
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      favicon: './public/favicon.ico',
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -110,52 +109,101 @@ const webpackConfig = {
     }),
   ],
   module: {
-    rules: [{
-      test: /\.(js|jsx)$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          presets: ['@babel/react', '@babel/env'],
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/react', '@babel/env'],
+          },
         },
       },
-    },
-    {
-      test: /\.(sa|sc|c)ss$/,
-      exclude: /node_modules/,
-      use: [
-        'style-loader',
-        'css-loader',
-        'postcss-loader',
-        'sass-loader',
-      ],
-    },
-    {
-      test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-      use: [{
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]',
-          outputPath: 'assets/fonts/', // where the fonts will go
-          publicPath: '/dist/', // override the default path
+      {
+        test: /\.eot(\?v=\d+.\d+.\d+)?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            name: '[name].[ext]',
+          },
         },
-      }],
-    },
-    {
-      test: /\.(gif|png|jpe?g)$/i,
-      use: [{
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]',
-          outputPath: 'assets/images/', // where the fonts will go
-          publicPath: '/dist/', // override the default path
+      },
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            mimetype: 'application/font-woff',
+          },
         },
-      }],
-    },
+      },
+      {
+        test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            mimetype: 'application/octet-stream',
+          },
+        },
+      },
+      {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            mimetype: 'image/svg+xml',
+          },
+        },
+      },
+      {
+        test: /\.(jpe?g|png|gif)$/i,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+          },
+        },
+      },
+      {
+        test: /\.ico$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+          },
+        },
+      },
+      {
+        test: /(\.css|\.scss|\.sass)$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+          'postcss-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: false,
+              outputStyle: 'expanded',
+              includePaths: [
+                path.resolve(process.cwd(), './node_modules'),
+              ],
+            },
+          },
+        ],
+      },
     ],
   },
   externals: {
-    Config: `./config/${JSON.stringify(`./config.${process.env.NODE_ENV}.json`)}`,
+    Config: `${JSON.stringify(path.join(__dirname,`config/config.${process.env.NODE_ENV}.json`))}`,
   },
 };
 module.exports = webpackConfig;
